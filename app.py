@@ -24,11 +24,53 @@ except FileNotFoundError:
     font_style = ""
     st.warning("⚠️ 'digital-7.ttf' fayli topilmadi! Iltimos, faylni loyiha papkasiga tashlang.")
 
-# 2. CSS UI (Raqamli displey dizayni)
+# 2. CSS UI (Tugmali menyu va raqamli displey dizayni)
 st.markdown(
     f"""
     <style>
     {font_style}
+
+    /* Streamlit radio tugmalarini chiroyli bosiladigan tugmali menyuga aylantirish */
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] {{
+        flex-direction: column;
+        gap: 10px;
+    }}
+    
+    div[data-testid="stSidebarUserContent"] label[data-testid="stWidgetLabel"] {{
+        color: #111111 !important;
+        font-weight: bold;
+        font-size: 16px;
+    }}
+
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label {{
+        background-color: #f0f2f6;
+        border: 1px solid #d1d5db;
+        padding: 10px 15px !important;
+        border-radius: 8px !important;
+        width: 100%;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }}
+
+    /* Sifatli bosilish effekti va radio nuqtachasini yashirish */
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label div[data-testid="stMarkdownContainer"] {{
+        color: #1f2937 !important;
+        font-weight: 600 !important;
+    }}
+    
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label div[role="img"] {{
+        display: none !important; /* Standart dumaloq nuqtani yashiramiz */
+    }}
+
+    /* Tugma tanlangandagi (Active) holat dizayni */
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label[data-shadow="true"] {{
+        background-color: #ff9800 !important; /* To'q sariq aktiv rang */
+        border-color: #e68a00 !important;
+    }}
+    
+    div[data-testid="stSidebarUserContent"] div[role="radiogroup"] label[data-shadow="true"] div[data-testid="stMarkdownContainer"] {{
+        color: #ffffff !important; /* Aktiv tugma matni oq rangda */
+    }}
 
     /* Asosiy ekran (Dashboard) kartalari */
     .dashboard-card {{
@@ -52,7 +94,7 @@ st.markdown(
     /* DIGITAL-7 SOAT KLASSI */
     .digital-clock {{
         font-family: 'Digital-7', sans-serif; 
-        color: #00E6FF; /* Neon Moviy */
+        color: #00E6FF; 
         font-size: 65px; 
         letter-spacing: 2px;
         margin: 5px 0;
@@ -69,7 +111,6 @@ st.markdown(
         font-family: sans-serif;
     }}
     
-    /* Tanlangan standart haqida ma'lumot qutisi */
     .info-box {{
         background-color: #111;
         border-left: 4px solid #ff9800;
@@ -85,51 +126,46 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 3. CHAP PANEL (Sidebar) - Radio Menyu variantlari
-st.sidebar.markdown("## 🛰️ Vaqt Standartini Tanlang")
-st.sidebar.markdown("Dashboarddagi barcha soatlar tanlangan standart vaqtiga moslab hisoblanadi.")
+# 3. CHAP PANEL (Sidebar) - Tugmali Menyu (Radio button o'zgartirildi)
+st.sidebar.markdown("## 🛰️ Boshqaruv Pulti")
 
 standards_list = [
-    "UTC (Coordinated Universal Time)", 
-    "GMT (Greenwich Mean Time)", 
-    "TAI (International Atomic Time)", 
-    "UNIX Timestamp", 
-    "GPS Time (Global Positioning)", 
-    "UT1 (Astronomical Time)", 
-    "TT (Terrestrial Time)", 
-    "Galileo Time (GST)", 
-    "GLONASS Time", 
-    "BeiDou Time (BDS)"
+    "🚀 UTC Standarti", 
+    "🌍 GMT Standarti", 
+    "⚛️ TAI (Atom Vaqti)", 
+    "💻 UNIX Timestamp", 
+    "🛰️ GPS Vaqti", 
+    "🔭 UT1 (Astronomik)", 
+    "🌐 TT (Yer Vaqti)", 
+    "🇪🇺 Galileo (GST)", 
+    "🇷🇺 GLONASS Vaqti", 
+    "🇨🇳 BeiDou (BDS)"
 ]
 
-# Chap paneldagi interaktiv menyu
-selected_standard = st.sidebar.radio("Mavjud standartlar:", standards_list)
+selected_standard = st.sidebar.radio("Vaqt standartini tanlang:", standards_list)
 
-# Har bir standart uchun qisqacha izohlar lug'ati
 standard_descriptions = {
-    "UTC (Coordinated Universal Time)": "Bosh xalqaro vaqt standarti. Atom soatlari va Yer aylanishi muvozanati.",
-    "GMT (Greenwich Mean Time)": "Grinvich meridianidagi geografik asosiy vaqt. UTC bilan deyarli bir xil.",
-    "TAI (International Atomic Time)": "Sof atom soatlari vaqti. Yer aylanishiga moslashmaydi, UTC'dan 37 soniya oldinda.",
-    "UNIX Timestamp": "1970-yildan beri o'tgan jami soniyalar (Barcha shaharlarda kompyuter soniyasi ko'rsatiladi).",
-    "GPS Time (Global Positioning)": "Navigatsiya sun'iy yo'ldoshlari vaqti. Kabisa soniyalarisiz, UTC'dan 18 soniya oldinda.",
-    "UT1 (Astronomical Time)": "Yerning o'z o'qi atrofida haqiqiy aylanishiga asoslangan astronomik vaqt.",
-    "TT (Terrestrial Time)": "Astronomik hisoblar uchun Yer vaqti. TAI standartidan qat'iy 32.184 soniya oldinda.",
-    "Galileo Time (GST)": "Yevropa Ittifoqi sun'iy yo'ldosh tizimi vaqti. TAI asosida ishlaydi.",
-    "GLONASS Time": "Rossiya navigatsiya vaqti. UTC bilan doimiy sinxron holatda yuradi.",
-    "BeiDou Time (BDS)": "Xitoy navigatsiya vaqti. Pekin standartiga bog'langan bo'lib, UTC'dan 8 soat oldinda."
+    "🚀 UTC Standarti": "Bosh xalqaro vaqt standarti. Atom soatlari va Yer aylanishi muvozanati.",
+    "🌍 GMT Standarti": "Grinvich meridianidagi geografik asosiy vaqt. UTC bilan deyarli bir xil.",
+    "⚛️ TAI (Atom Vaqti)": "Sof atom soatlari vaqti. Yer aylanishiga moslashmaydi, UTC'dan 37 soniya oldinda.",
+    "💻 UNIX Timestamp": "1970-yildan beri o'tgan jami soniyalar (Barcha shaharlarda kompyuter soniyasi ko'rsatiladi).",
+    "🛰️ GPS Vaqti": "Navigatsiya sun'iy yo'ldoshlari vaqti. Kabisa soniyalarisiz, UTC'dan 18 soniya oldinda.",
+    "🔭 UT1 (Astronomik)": "Yerning o'z o'qi atrofida haqiqiy aylanishiga asoslangan astronomik vaqt.",
+    "🌐 TT (Yer Vaqti)": "Astronomik hisoblar uchun Yer vaqti. TAI standartidan qat'iy 32.184 soniya oldinda.",
+    "🇪🇺 Galileo (GST)": "Yevropa Ittifoqi sun'iy yo'ldosh tizimi vaqti. TAI vaqtiga asoslangan.",
+    "🇷🇺 GLONASS Vaqti": "Rossiya navigatsiya vaqti. UTC bilan doimiy sinxron holatda yuradi.",
+    "🇨🇳 BeiDou (BDS)": "Xitoy navigatsiya vaqti. Pekin standartiga bog'langan bo'lib, UTC'dan 8 soat oldinda."
 }
 
-# 4. ASOSIY DASHBOARD - Sarlavha va Izoh
+# 4. ASOSIY DASHBOARD
 st.title("🎯 Global Real-Time Clock Dashboard")
 st.markdown(f"""
 <div class="info-box">
-    <strong>Joriy rejim:</strong> {selected_standard}<br>
+    <strong>Faol Tizim:</strong> {selected_standard}<br>
     <span style="color: #888;">{standard_descriptions[selected_standard]}</span>
 </div>
 """, unsafe_allow_html=True)
 
-# 8 ta davlat/shahar ro'yxati va ularning standart UTC offset farqlari (soat hisobida)
-# Chunki foydalanuvchi standartni o'zgartirganda, shaharlar o'sha yangi asosga nisbatan o'z farqini saqlab qolishi kerak.
 cities = {
     "Toshkent 🇺🇿": "Asia/Tashkent",
     "London 🇬🇧": "Europe/London",
@@ -141,7 +177,6 @@ cities = {
     "Sidney 🇦🇺": "Australia/Sydney"
 }
 
-# 4x2 simmetrik kataklar yaratish
 row1_cols = st.columns(4)
 row2_cols = st.columns(4)
 all_columns = row1_cols + row2_cols
@@ -151,53 +186,46 @@ for idx, _ in enumerate(cities.items()):
     with all_columns[idx]:
         main_placeholders.append(st.empty())
 
-# 5. YUQORI CHASTOTALI DINAMIK HISOB-KITOB TSIKLI
+# 5. YANGILANISH TSIKLI
 while True:
     now_utc = datetime.datetime.now(pytz.utc)
     unix_base = time.time()
     
-    # Tanlangan menyuga qarab asosiy "tayanch" vaqtni aniqlaymiz (UTCga nisbatan farqi)
-    if selected_standard == "UTC (Coordinated Universal Time)":
+    if "UTC" in selected_standard:
         base_time = now_utc
-    elif selected_standard == "GMT (Greenwich Mean Time)":
-        base_time = now_utc # Millisoniyasiz standart rejim deb qaraladi
-    elif selected_standard == "TAI (International Atomic Time)":
+    elif "GMT" in selected_standard:
+        base_time = now_utc
+    elif "TAI" in selected_standard:
         base_time = now_utc + datetime.timedelta(seconds=37)
-    elif selected_standard == "GPS Time (Global Positioning)":
+    elif "GPS" in selected_standard:
         base_time = now_utc + datetime.timedelta(seconds=18)
-    elif selected_standard == "UT1 (Astronomical Time)":
+    elif "UT1" in selected_standard:
         base_time = now_utc - datetime.timedelta(seconds=0.27)
-    elif selected_standard == "TT (Terrestrial Time)":
+    elif "TT" in selected_standard:
         base_time = now_utc + datetime.timedelta(seconds=37 + 32.184)
-    elif selected_standard == "Galileo Time (GST)":
+    elif "Galileo" in selected_standard:
         base_time = now_utc + datetime.timedelta(seconds=37 - 19)
-    elif selected_standard == "GLONASS Time":
+    elif "GLONASS" in selected_standard:
         base_time = now_utc
-    elif selected_standard == "BeiDou Time (BDS)":
+    elif "BeiDou" in selected_standard:
         base_time = now_utc + datetime.timedelta(hours=8)
-    elif selected_standard == "UNIX Timestamp":
-        base_time = None # Maxsus rejim
+    elif "UNIX" in selected_standard:
+        base_time = None
 
-    # Shaharlarni yangilash
     for idx, (city_name, tz_string) in enumerate(cities.items()):
         tz = pytz.timezone(tz_string)
-        
-        # Shaharning UTCga nisbatan hozirgi farqini olamiz (yozgi/qishki vaqtni hisobga olgan holda)
         city_local = datetime.datetime.now(tz)
         utc_offset = city_local.utcoffset() 
         
-        if selected_standard == "UNIX Timestamp":
-            # Unix vaqtida hamma joyda bir xil soniya aylanadi
-            hms = str(int(unix_base))[-6:] # Oxirgi 6 ta raqami chiroyli sig'ishi uchun
+        if "UNIX" in selected_standard:
+            hms = str(int(unix_base))[-6:]
             ms = f".{str(unix_base).split('.')[1][:3]}"
-            date_str = "Unix Soniya ko'rsatkichi"
+            date_str = "Unix Epoch Seconds"
         else:
-            # Tanlangan tayanch vaqtga shaharning shaxsiy vaqt farqini qo'shamiz
             final_city_time = base_time + utc_offset
-            
             hms = final_city_time.strftime("%H:%M:%S")
             ms = final_city_time.strftime(".%f")[:-3]
-            date_str = city_local.strftime("%A, %d-%b %Y") # Kalendar o'zgarmaydi
+            date_str = city_local.strftime("%A, %d-%b %Y")
 
         html_card = f"""
         <div class="dashboard-card">
@@ -209,4 +237,3 @@ while True:
         main_placeholders[idx].markdown(html_card, unsafe_allow_html=True)
         
     time.sleep(0.05)
-    
